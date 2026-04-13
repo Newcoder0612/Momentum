@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Momentum — Habit & Task Tracker</title>
+
+  <!-- PWA tags -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#e8b86d" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Momentum" />
+  <link rel="apple-touch-icon" href="/static/icons/icon-192.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" />
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">
+        <span class="brand-icon">◈</span>
+        <h1 class="brand-name">Momentum</h1>
+      </div>
+      <div class="header-right">
+        <span class="welcome-text" id="welcomeText"></span>
+        <div class="date-badge" id="dateBadge"></div>
+        <button class="logout-btn" onclick="logout()">Log out</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="score-bar">
+    <div class="score-pill habit-score">
+      <span class="score-label">Habit Points</span>
+      <span class="score-value" id="habitPoints">0</span>
+    </div>
+    <div class="score-divider">✦</div>
+    <div class="score-pill task-score">
+      <span class="score-label">Task Points</span>
+      <span class="score-value" id="taskPoints">0</span>
+    </div>
+  </section>
+
+  <main class="main-grid">
+    <section class="panel panel--habits">
+      <div class="panel-header">
+        <div class="panel-title-group">
+          <span class="panel-icon">⟳</span>
+          <h2 class="panel-title">Daily Habits</h2>
+        </div>
+        <button class="add-btn" onclick="openModal('habit')">＋ Add Habit</button>
+      </div>
+      <p class="panel-sub">Repeatable actions tracked every day</p>
+      <ul class="item-list" id="habitList">
+        <li class="empty-state">No habits yet — start building one!</li>
+      </ul>
+    </section>
+
+    <section class="panel panel--tasks">
+      <div class="panel-header">
+        <div class="panel-title-group">
+          <span class="panel-icon">✓</span>
+          <h2 class="panel-title">To-Do List</h2>
+        </div>
+        <button class="add-btn" onclick="openModal('task')">＋ Add Task</button>
+      </div>
+      <p class="panel-sub">One-time tasks to get done today</p>
+      <ul class="item-list" id="taskList">
+        <li class="empty-state">No tasks yet — add something!</li>
+      </ul>
+    </section>
+  </main>
+
+  <section class="graph-section">
+    <div class="graph-header">
+      <h2 class="graph-title">Progress Over Time</h2>
+      <div class="range-tabs">
+        <button class="range-tab active" data-days="7">7 Days</button>
+        <button class="range-tab" data-days="14">14 Days</button>
+        <button class="range-tab" data-days="30">30 Days</button>
+      </div>
+    </div>
+    <div class="chart-wrapper">
+      <canvas id="progressChart"></canvas>
+    </div>
+  </section>
+
+  <div class="modal-backdrop" id="modalBackdrop" onclick="closeModal()"></div>
+  <div class="modal" id="addModal">
+    <div class="modal-header">
+      <h3 class="modal-title" id="modalTitle">Add Habit</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="text" id="itemNameInput" class="modal-input"
+             placeholder="e.g. Drink 8 glasses of water" maxlength="80"
+             onkeydown="if(event.key==='Enter') submitItem()" />
+      <p class="modal-hint" id="modalHint">Habits repeat daily and build streaks.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-submit" id="submitBtn" onclick="submitItem()">Add Habit</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Momentum — Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" />
+  <link rel="stylesheet" href="/static/style.css" />
+  <style>
+    .auth-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .auth-card {
+      width: min(420px, 100%);
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2.5rem;
+      border-top: 3px solid var(--habit);
+    }
+    .auth-brand { text-align:center; margin-bottom:2rem; }
+    .auth-brand-icon { font-size:2rem; color:var(--habit); display:block; margin-bottom:.5rem; animation:spin 20s linear infinite; }
+    .auth-brand-name { font-family:var(--font-serif); font-size:2rem; font-weight:400; color:var(--cream); }
+    .auth-brand-sub  { font-size:.8rem; color:var(--cream-muted); margin-top:.3rem; }
+    .auth-tabs { display:flex; background:var(--bg-card); border-radius:999px; padding:.25rem; margin-bottom:1.75rem; }
+    .auth-tab  { flex:1; background:transparent; border:none; color:var(--cream-muted); font-family:var(--font-sans); font-size:.85rem; font-weight:500; padding:.5rem; border-radius:999px; cursor:pointer; transition:all .2s; }
+    .auth-tab.active { background:var(--cream); color:var(--bg); }
+    .auth-field  { margin-bottom:1rem; }
+    .auth-label  { display:block; font-size:.75rem; text-transform:uppercase; letter-spacing:.08em; color:var(--cream-muted); margin-bottom:.4rem; }
+    .auth-input  { width:100%; background:var(--bg-card); border:1px solid var(--border-light); border-radius:var(--radius-sm); color:var(--cream); font-family:var(--font-sans); font-size:.95rem; padding:.75rem 1rem; outline:none; transition:border-color .2s; }
+    .auth-input:focus { border-color:var(--habit); }
+    .auth-input::placeholder { color:var(--cream-muted); }
+    .auth-submit { width:100%; background:var(--habit); border:none; color:#000; font-family:var(--font-sans); font-size:.95rem; font-weight:600; padding:.8rem; border-radius:999px; cursor:pointer; margin-top:.5rem; transition:opacity .2s, transform .15s; }
+    .auth-submit:hover  { opacity:.85; }
+    .auth-submit:active { transform:scale(.98); }
+    .auth-error   { background:rgba(192,97,74,.15); border:1px solid var(--danger); color:#e88a77; font-size:.82rem; padding:.6rem 1rem; border-radius:var(--radius-sm); margin-bottom:1rem; display:none; }
+    .auth-success { background:rgba(126,200,164,.12); border:1px solid var(--task); color:var(--task); font-size:.82rem; padding:.6rem 1rem; border-radius:var(--radius-sm); margin-bottom:1rem; display:none; }
+    .auth-error.show, .auth-success.show { display:block; }
+    .auth-hint { text-align:center; font-size:.75rem; color:var(--cream-muted); margin-top:1.25rem; }
+    .forgot-link { background:none; border:none; color:var(--cream-muted); font-size:.78rem; cursor:pointer; text-decoration:underline; padding:0; margin-top:.5rem; display:block; text-align:right; transition:color .2s; }
+    .forgot-link:hover { color:var(--cream); }
+    .back-link { background:none; border:none; color:var(--cream-muted); font-size:.82rem; cursor:pointer; padding:0; margin-bottom:1rem; display:flex; align-items:center; gap:.3rem; transition:color .2s; }
+    .back-link:hover { color:var(--cream); }
+  </style>
+</head>
+<body>
+<div class="auth-page">
+  <div class="auth-card">
+
+    <div class="auth-brand">
+      <span class="auth-brand-icon">◈</span>
+      <div class="auth-brand-name">Momentum</div>
+      <div class="auth-brand-sub">Build better habits, one day at a time</div>
+    </div>
+
+    <!-- ── SCREEN 1: Login / Register tabs ── -->
+    <div id="screen-auth">
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="showTab('login')">Log In</button>
+        <button class="auth-tab"        onclick="showTab('register')">Register</button>
+      </div>
+
+      <div class="auth-error"   id="authError"></div>
+      <div class="auth-success" id="authSuccess"></div>
+
+      <!-- Login -->
+      <div id="loginForm">
+        <div class="auth-field">
+          <label class="auth-label">Username</label>
+          <input class="auth-input" type="text" id="loginUsername" placeholder="your username"
+                 onkeydown="if(event.key==='Enter') submitLogin()" />
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">Password</label>
+          <input class="auth-input" type="password" id="loginPassword" placeholder="••••••••"
+                 onkeydown="if(event.key==='Enter') submitLogin()" />
+        </div>
+        <!-- Forgot password link switches to forgot screen -->
+        <button class="forgot-link" onclick="showScreen('forgot')">Forgot your password?</button>
+        <button class="auth-submit" onclick="submitLogin()">Log In</button>
+      </div>
+
+      <!-- Register -->
+      <div id="registerForm" style="display:none">
+        <div class="auth-field">
+          <label class="auth-label">Username</label>
+          <input class="auth-input" type="text" id="regUsername" placeholder="at least 3 characters"
+                 onkeydown="if(event.key==='Enter') submitRegister()" />
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">Email Address</label>
+          <input class="auth-input" type="email" id="regEmail" placeholder="you@example.com"
+                 onkeydown="if(event.key==='Enter') submitRegister()" />
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">Password</label>
+          <input class="auth-input" type="password" id="regPassword" placeholder="at least 6 characters"
+                 onkeydown="if(event.key==='Enter') submitRegister()" />
+        </div>
+        <button class="auth-submit" onclick="submitRegister()">Create Account</button>
+      </div>
+
+      <p class="auth-hint">Your data is private and only visible to you.</p>
+    </div>
+
+    <!-- ── SCREEN 2: Forgot Password ── -->
+    <div id="screen-forgot" style="display:none">
+      <button class="back-link" onclick="showScreen('auth')">← Back to login</button>
+      <h3 style="font-family:var(--font-serif);font-weight:400;color:var(--cream);margin-bottom:.4rem;">Reset Password</h3>
+      <p style="font-size:.82rem;color:var(--cream-muted);margin-bottom:1.25rem;">
+        Enter the email address linked to your account. We'll send you a reset link.
+      </p>
+      <div class="auth-error"   id="forgotError"></div>
+      <div class="auth-success" id="forgotSuccess"></div>
+      <div class="auth-field">
+        <label class="auth-label">Email Address</label>
+        <input class="auth-input" type="email" id="forgotEmail" placeholder="you@example.com"
+               onkeydown="if(event.key==='Enter') submitForgot()" />
+      </div>
+      <button class="auth-submit" onclick="submitForgot()">Send Reset Link</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const API = "http://127.0.0.1:5000/api";
+
+  // ── Screen switcher ──────────────────────────────────────────────────────────
+  // The page has two "screens" — auth (login/register) and forgot (password reset request)
+  // Only one is visible at a time
+  function showScreen(name) {
+    document.getElementById("screen-auth").style.display   = name === "auth"   ? "block" : "none";
+    document.getElementById("screen-forgot").style.display = name === "forgot" ? "block" : "none";
+    clearMessages();
+  }
+
+  function showTab(tab) {
+    document.getElementById("loginForm").style.display    = tab === "login"    ? "block" : "none";
+    document.getElementById("registerForm").style.display = tab === "register" ? "block" : "none";
+    document.querySelectorAll(".auth-tab").forEach((b, i) => {
+      b.classList.toggle("active", (i===0 && tab==="login") || (i===1 && tab==="register"));
+    });
+    clearMessages();
+  }
+
+  function showError(id, msg)   { const e=document.getElementById(id); e.textContent=msg; e.classList.add("show"); }
+  function showSuccess(id, msg) { const e=document.getElementById(id); e.textContent=msg; e.classList.add("show"); }
+  function clearMessages() {
+    ["authError","authSuccess","forgotError","forgotSuccess"].forEach(id => {
+      document.getElementById(id).classList.remove("show");
+    });
+  }
+
+  // ── Login ────────────────────────────────────────────────────────────────────
+  async function submitLogin() {
+    const username = document.getElementById("loginUsername").value.trim();
+    const password = document.getElementById("loginPassword").value;
+    if (!username || !password) return showError("authError", "Please fill in both fields.");
+    try {
+      const res  = await fetch(`${API}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ username, password })
+      });
+      const data = await res.json();
+      if (!res.ok) return showError("authError", data.error);
+      window.location.href = "/";
+    } catch { showError("authError", "Could not reach the server. Is it running?"); }
+  }
+
+  // ── Register ─────────────────────────────────────────────────────────────────
+  async function submitRegister() {
+    const username = document.getElementById("regUsername").value.trim();
+    const email    = document.getElementById("regEmail").value.trim();
+    const password = document.getElementById("regPassword").value;
+    if (!username || !email || !password) return showError("authError", "Please fill in all fields.");
+    try {
+      const res  = await fetch(`${API}/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ username, email, password })
+      });
+      const data = await res.json();
+      if (!res.ok) return showError("authError", data.error);
+      window.location.href = "/";
+    } catch { showError("authError", "Could not reach the server. Is it running?"); }
+  }
+
+  // ── Forgot Password ───────────────────────────────────────────────────────────
+  async function submitForgot() {
+    const email = document.getElementById("forgotEmail").value.trim();
+    if (!email) return showError("forgotError", "Please enter your email address.");
+
+    const btn = document.querySelector("#screen-forgot .auth-submit");
+    btn.textContent = "Sending...";
+    btn.disabled    = true;
+
+    try {
+      const res  = await fetch(`${API}/forgot-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        showError("forgotError", data.error);
+      } else {
+        // Always show the same success message for security
+        showSuccess("forgotSuccess",
+          "If that email is registered, a reset link has been sent. Check your inbox (and spam folder)."
+        );
+        document.getElementById("forgotEmail").value = "";
+      }
+    } catch {
+      showError("forgotError", "Could not reach the server.");
+    } finally {
+      btn.textContent = "Send Reset Link";
+      btn.disabled    = false;
+    }
+  }
+</script>
+</body>
+</html>
